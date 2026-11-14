@@ -1,0 +1,499 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "League Mono", ui-monospace, monospace;
+
+  /* Fondo oscuro profundo (debajo de las colinas del inicio) */
+  --color-bg: #0d0f12;
+  --color-surface: #15181d;
+  --color-surface-2: #1c2026;
+  --color-line: #272b33;
+  --color-accent: #e4e4e7;
+
+  /* Curvas de animación (Emil Kowalski) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-bg);
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: #e7e7ea;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@layer base {
+  /* Puntero normal en textos y sin cursor de escritura al hacer clic */
+  html {
+    cursor: default;
+  }
+  * {
+    caret-color: transparent;
+  }
+  input,
+  textarea,
+  [contenteditable='true'] {
+    caret-color: auto;
+    cursor: text;
+  }
+  a,
+  button {
+    cursor: pointer;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+/* Foco visible solo con teclado */
+:focus-visible {
+  outline: 2px solid rgb(255 255 255 / 0.7);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Scrollbar en el color de la página */
+html {
+  scrollbar-color: #3a3a40 var(--color-bg);
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #3a3a40;
+  border: 3px solid var(--color-bg);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4a4a52;
+}
+
+::selection {
+  background: rgb(255 255 255 / 0.18);
+  color: #fff;
+}
+
+/* Tarjeta premium: borde con degradé (más luz arriba) */
+.card-premium {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-surface), var(--color-surface)) padding-box,
+    linear-gradient(180deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.04) 40%, rgb(255 255 255 / 0.07)) border-box;
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.04) inset,
+    0 30px 60px -30px rgb(0 0 0 / 0.55);
+  transition:
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-premium:hover,
+.card-premium.is-visible:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.06) inset,
+    0 40px 80px -30px rgb(0 0 0 / 0.7);
+}
+
+/* Número de fondo solo con contorno */
+.num-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgb(255 255 255 / 0.07);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-premium.is-visible:hover {
+    transform: none;
+  }
+}
+
+/* Título del inicio: cada palabra aparece del desenfoque a nítida */
+.palabra-entrada {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(14px);
+  animation: palabra-in 700ms var(--ease-out) forwards;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes palabra-in {
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .palabra-entrada {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* Aparición suave al hacer scroll: corta, con un leve desenfoque que se aclara */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(4px);
+  transition:
+    opacity 0.55s var(--ease-out),
+    transform 0.55s var(--ease-out),
+    filter 0.55s var(--ease-out);
+  transition-delay: var(--d, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Cinta de tecnologías */
+@keyframes cinta {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* =========================================================
+   Colores del inicio y del footer (cambian con el tema)
+   ========================================================= */
+:root {
+  /* Cielo igual al de Josh: se aclara hacia las colinas */
+  --cielo: linear-gradient(180deg, #0f1c2b 0, #0f1c2c 3vw, #102232 6.3vw, #12283a 9.5vw, #152f47 12.7vw, #173a54 16vw, #1a4862 21.6vw, #1a4862 100%);
+  --colina-atras: #0f1b2a;
+  --colina-izq: #0b131e;
+  --colina-medio: #0b1524;
+  /* Inicio de "Acerca de": fondo liso oscuro con nubes grises */
+  --acerca-cielo: linear-gradient(180deg, #0d0f12 0%, #0f1215 40%, #111417 65%, #111417 100%);
+  --acerca-nube-1: #20242a;
+  --acerca-nube-2: #292d33;
+  --pie-fondo: linear-gradient(180deg, #0c2034 0%, #112d45 30%, #154160 62%, #1a5a7c 100%);
+  --pie-nube: #112f45;
+  --tile-base: rgba(10, 14, 22, 0.6);
+  --metrica-alpha: 9%;
+}
+
+/* =========================================================
+   TEMA CLARO
+   ========================================================= */
+html[data-tema='claro'] {
+  color-scheme: light;
+  --color-bg: #ffffff;
+  --color-surface: #f4f7fa;
+  --color-surface-2: #eaeff4;
+  --color-line: #dde4ec;
+  --color-accent: #0f1b2b;
+
+  --cielo: radial-gradient(60% 260px at 50% 380px, rgba(120, 196, 236, 0.75), transparent 75%),
+    linear-gradient(180deg, #a2d8f4 0%, #9dd5f3 45%, #93d1f1 75%, #8ccdef 100%);
+  --colina-atras: #b3e1f8;
+  --colina-izq: #d8effc;
+  --colina-medio: #b3e1f8;
+  --acerca-cielo: linear-gradient(180deg, #ffffff 0%, #f6f8fa 50%, #eef2f6 100%);
+  --acerca-nube-1: #e3e8ee;
+  --acerca-nube-2: #d7dee6;
+  --pie-fondo: linear-gradient(180deg, #98d8f5 0%, #8fd2f3 35%, #82cbf2 70%, #74c5f0 100%);
+  --pie-nube: #afe3fb;
+  --tile-base: rgba(255, 255, 255, 0.55);
+  --metrica-alpha: 28%;
+}
+html[data-tema='claro'] body {
+  color: #1e293b;
+}
+
+/* Cambio de tema al instante (sin transiciones de color) */
+html.cambiando-tema *:not(.tema-anim, .tema-anim *),
+html.cambiando-tema *::before,
+html.cambiando-tema *::after {
+  transition: none !important;
+}
+
+/* Textos */
+html[data-tema='claro'] [class~='text-white'],
+html[data-tema='claro'] [class~='hover:text-white']:hover,
+html[data-tema='claro'] [class~='text-zinc-100'],
+html[data-tema='claro'] [class~='text-accent'] {
+  color: #0f1b2b;
+}
+html[data-tema='claro'] [class~='text-zinc-200'] { color: #1e2b3b; }
+html[data-tema='claro'] [class~='text-zinc-300'],
+html[data-tema='claro'] [class~='text-zinc-300/90'],
+html[data-tema='claro'] [class~='text-zinc-300/85'] { color: #334155; }
+html[data-tema='claro'] [class~='text-zinc-400'] { color: #4b5b6e; }
+/* Botón de idioma del menú: celeste al pasar el puntero también en tema claro */
+html[data-tema='claro'] [class~='hover:text-[var(--acento)]']:hover { color: var(--acento); }
+/* Redes del menú (GitHub, Instagram, LinkedIn): su color al pasar el puntero también en tema claro */
+html[data-tema='claro'] [class~='hover:text-[var(--c)]']:hover { color: var(--c); }
+html[data-tema='claro'] [class~='text-zinc-500'] { color: #64748b; }
+html[data-tema='claro'] [class~='placeholder:text-zinc-500']::placeholder { color: #7b8a9c; }
+
+/* Footer: textos oscuros sobre el celeste */
+html[data-tema='claro'] [class~='text-[#e6edf3]'] { color: #0f2a3d; }
+html[data-tema='claro'] [class~='text-[#a8c0d4]'] { color: #22506e; }
+html[data-tema='claro'] [class~='text-[#c9d7e3]'] { color: #12324a; }
+/* Íconos del footer en tema claro: al pasar el mouse toman su color (rojo Gmail, morado GitHub…) */
+html[data-tema='claro'] [class~='text-[#c9d7e3]']:hover { color: var(--c, #0b1b2b); }
+
+/* Botones blancos → oscuros */
+html[data-tema='claro'] [class~='bg-white'] { background-color: #0f1b2b; }
+html[data-tema='claro'] [class~='hover:bg-zinc-100']:hover,
+html[data-tema='claro'] [class~='hover:bg-zinc-200']:hover { background-color: #22324a; }
+html[data-tema='claro'] [class~='text-[#1e1e21]'] { color: #ffffff; }
+html[data-tema='claro'] [class~='bg-accent'] { background-color: #0f1b2b; }
+
+/* Bordes y fondos translúcidos blancos → oscuros */
+html[data-tema='claro'] [class~='border-white/[0.06]'],
+html[data-tema='claro'] [class~='border-white/[0.07]'] { border-color: rgba(15, 27, 43, 0.07); }
+/* Bordes de las tarjetas: muy suaves en tema claro */
+html[data-tema='claro'] [class~='border-white/[0.08]'] { border-color: rgba(15, 27, 43, 0.045); }
+html[data-tema='claro'] [class~='border-white/10'] { border-color: rgba(15, 27, 43, 0.12); }
+html[data-tema='claro'] [class~='hover:border-white/[0.15]']:hover { border-color: rgba(15, 27, 43, 0.1); }
+html[data-tema='claro'] [class~='bg-white/[0.03]'],
+html[data-tema='claro'] [class~='bg-white/[0.04]'],
+html[data-tema='claro'] [class~='bg-white/[0.05]'],
+html[data-tema='claro'] [class~='bg-white/[0.06]'],
+html[data-tema='claro'] [class~='bg-white/[0.07]'],
+html[data-tema='claro'] [class~='bg-white/[0.08]'],
+html[data-tema='claro'] [class~='bg-white/10'] { background-color: rgba(15, 27, 43, 0.06); }
+html[data-tema='claro'] [class~='ring-white/[0.06]'],
+html[data-tema='claro'] [class~='ring-white/[0.08]'] { --tw-ring-color: rgba(15, 27, 43, 0.1); }
+
+/* Barra al bajar, buscador y campo del footer */
+html[data-tema='claro'] [class~='bg-[#0d1119]/80'] { background-color: rgba(255, 255, 255, 0.8); }
+html[data-tema='claro'] [class~='bg-[#151a23]'] { background-color: #ffffff; }
+html[data-tema='claro'] [class~='bg-[#05070b]/70'] { background-color: rgba(15, 27, 43, 0.3); }
+html[data-tema='claro'] [class~='bg-[#0d0f12]'] { background-color: #ffffff; }
+html[data-tema='claro'] footer input { color: #0f1b2b; caret-color: #0f1b2b; }
+html[data-tema='claro'] #buscador-input { color: #0f1b2b; caret-color: #0f1b2b; }
+
+/* Colores de marca: más oscuros para que se lean sobre blanco */
+html[data-tema='claro'] .group\/chip,
+html[data-tema='claro'] .tinte {
+  filter: brightness(0.64) saturate(1.45);
+}
+
+/* Scrollbar y foco */
+html[data-tema='claro'] ::-webkit-scrollbar-thumb { background: #cbd5e1; }
+html[data-tema='claro'] :focus-visible { outline-color: rgba(15, 27, 43, 0.6); }
+html[data-tema='claro'] { scrollbar-color: #cbd5e1 #ffffff; }
+
+/* Tema claro: líneas y detalles de Trayectoria y Stack */
+html[data-tema='claro'] [class~='from-white'] { --tw-gradient-from: #0f1b2b; }
+html[data-tema='claro'] [class~='to-white/40'] { --tw-gradient-to: rgba(15, 27, 43, 0.35); }
+html[data-tema='claro'] [class~='via-white/40'] { --tw-gradient-via: rgba(15, 27, 43, 0.25); }
+html[data-tema='claro'] [class~='sm:group-hover:bg-white/[0.025]'] { --hover-claro: 1; }
+html[data-tema='claro'] .group:hover > [class~='sm:group-hover:bg-white/[0.025]'] { background-color: rgba(15, 27, 43, 0.035); }
+html[data-tema='claro'] .group:hover [class~='group-hover:border-white'] { border-color: #0f1b2b; }
+html[data-tema='claro'] [class~='border-zinc-500'] { border-color: #94a3b8; }
+html[data-tema='claro'] .linea-color { opacity: 0.25; }
+html[data-tema='claro'] .group:hover .linea-color { opacity: 0.5; }
+
+/* Tema oscuro: bordes y líneas de las tarjetas más suaves */
+html:not([data-tema='claro']) [class~='border-white/[0.08]'] { border-color: rgba(255, 255, 255, 0.045); }
+html:not([data-tema='claro']) [class~='hover:border-white/[0.15]']:hover { border-color: rgba(255, 255, 255, 0.09); }
+html:not([data-tema='claro']) .linea-color { opacity: 0.3; }
+html:not([data-tema='claro']) .group:hover .linea-color { opacity: 0.6; }
+html:not([data-tema='claro']) [class~='via-white/40'] { --tw-gradient-via: rgba(255, 255, 255, 0.18); }
+
+/* Tema claro: botón "Probar demo" en celeste */
+html[data-tema='claro'] .boton-demo { background-color: #c4e8fb; color: #0b4f78; }
+html[data-tema='claro'] .boton-demo:hover { background-color: #addff9; }
+
+/* Parlante: las ondas se apagan y prenden una tras otra al pasar el mouse */
+@keyframes onda {
+  0%, 100% { opacity: 1; }
+  40% { opacity: 0; }
+}
+a:hover .onda,
+button:hover .onda {
+  animation: onda 700ms ease-in-out;
+}
+a:hover .onda-2,
+button:hover .onda-2 {
+  animation-delay: 120ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  a:hover .onda,
+  button:hover .onda { animation: none; }
+}
+
+/* Certificados: el elegido aparece suave */
+@keyframes cert-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.985); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.cert-entrada { animation: cert-in 450ms var(--ease-out) both; }
+@media (prefers-reduced-motion: reduce) { .cert-entrada { animation: none; } }
+html[data-tema='claro'] [class~='ring-white/10'] { --tw-ring-color: rgba(15, 27, 43, 0.12); }
+html[data-tema='claro'] [class~='ring-white/25'] { --tw-ring-color: rgba(15, 27, 43, 0.2); }
+@keyframes visor-in { from { opacity: 0; } to { opacity: 1; } }
+.visor-entrada { animation: visor-in 250ms ease both; }
+
+/* Etiqueta rosa arriba de cada título de sección (como la web de Josh) */
+:root { --acento: #4aa8e0; }
+html[data-tema='claro'] { --acento: #1d9be0; }
+.etiqueta-seccion { color: #ff1a81; }
+html[data-tema='claro'] .etiqueta-seccion { color: #d4106a; }
+/* Cambio suave entre certificados */
+.cert-slide {
+  transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out), filter 900ms var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) { .cert-slide { transition: opacity 300ms ease; } }
+/* Punto activo: se llena en 5 segundos (lo mismo que tarda en cambiar) */
+@keyframes punto-llenar { from { width: 0%; } to { width: 100%; } }
+.punto-relleno { animation: punto-llenar 5000ms linear forwards; }
+@media (prefers-reduced-motion: reduce) { .punto-relleno { animation: none; width: 100%; } }
+.group\/punto:hover > span { background-color: rgba(127, 127, 127, 0.6); }
+.group\/punto[aria-current='true']:hover > span { background-color: color-mix(in srgb, var(--acento) 25%, transparent); }
+
+/* Números que ruedan (como un contador mecánico) */
+.rodante {
+  display: inline-flex;
+  font-variant-numeric: proportional-nums;
+}
+.rueda {
+  position: relative;
+  display: inline-block;
+}
+.rueda-medida {
+  visibility: hidden;
+}
+.rueda-ventana {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* desvanece arriba y abajo para que el giro se vea suave */
+  -webkit-mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(transparent, #000 18%, #000 82%, transparent);
+}
+.rueda-tira {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 1600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.rueda-tira > span {
+  display: block;
+  text-align: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rueda-tira { transition: none; }
+}
+
+/* Tarjetas sin borde (como las del inicio): solo el fondo las separa */
+html [class~='border-white/[0.08]'] { border-color: transparent !important; }
+html [class~='hover:border-white/[0.15]']:hover { border-color: transparent !important; }
+html[data-tema='claro'] [class~='via-white/40'] { --tw-gradient-via: transparent; }
+html[data-tema='claro'] .linea-color { opacity: 0 !important; }
+
+
+/* Cielo del inicio: estrellas que titilan */
+@keyframes titilar {
+  0%, 100% { opacity: calc(var(--b) * 0.35); transform: scale(0.8); }
+  50% { opacity: var(--b); transform: scale(1.1); }
+}
+.estrella {
+  animation: titilar ease-in-out infinite;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+}
+
+/* Estrella fugaz: cruza en diagonal y se apaga */
+@keyframes fugaz {
+  0% { transform: translate(0, 0) rotate(-35deg) scaleX(0); opacity: 0; }
+  2% { opacity: 1; transform: translate(0, 0) rotate(-35deg) scaleX(1); }
+  9% { transform: translate(-320px, 220px) rotate(-35deg) scaleX(1); opacity: 0; }
+  100% { transform: translate(-320px, 220px) rotate(-35deg) scaleX(1); opacity: 0; }
+}
+.fugaz {
+  position: absolute;
+  width: 140px;
+  height: 1.5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.95), transparent);
+  transform-origin: left center;
+  opacity: 0;
+  animation: fugaz 14s ease-out infinite;
+}
+
+/* Nubes que cruzan despacio el cielo claro */
+@keyframes nube-cruzar {
+  from { transform: translateX(-30vw); }
+  to { transform: translateX(120vw); }
+}
+.nube {
+  left: 0;
+  animation: nube-cruzar linear infinite;
+  filter: drop-shadow(0 6px 10px rgba(80, 150, 200, 0.12));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .estrella, .fugaz, .nube { animation: none; }
+  .fugaz { display: none; }
+}
+
+
+/* Línea de Trayectoria: gruesa y redondeada, en el color de acento */
+:root { --punto-borde: rgba(255, 255, 255, 0.18); }
+html[data-tema='claro'] { --punto-borde: rgba(15, 27, 43, 0.18); }
+.linea-base { background: var(--punto-borde); opacity: 0.6; }
+
+/* Ícono de documento: se inclina y salta con rebote al pasar el mouse */
+.icono-doc {
+  transition: transform 650ms cubic-bezier(0.3, 1.8, 0.4, 1);
+}
+.group\/btn:hover .icono-doc {
+  transform: translateY(-2px) rotate(-12deg) scale(1.12);
+  transition-duration: 300ms;
+}
+@media (prefers-reduced-motion: reduce) { .icono-doc { transition: none; } }
+
+/* "Pantalla completa": las flechitas se abren hacia afuera con rebote */
+.flecha-expandir {
+  transition: transform 600ms cubic-bezier(0.3, 1.8, 0.4, 1);
+}
+.group\/full:hover .flecha-expandir.arriba { transform: translate(2.5px, -2.5px); transition-duration: 280ms; }
+.group\/full:hover .flecha-expandir.abajo { transform: translate(-2.5px, 2.5px); transition-duration: 280ms; }
+@media (prefers-reduced-motion: reduce) { .flecha-expandir { transition: none; } }
+
+/* Botón "volver arriba": brillo verde agua detrás (más fuerte en tema claro para que se note sobre blanco) */
+.boton-arriba { box-shadow: 0 0 28px -4px rgba(56, 170, 190, 0.45), 0 8px 24px -8px rgba(0, 0, 0, 0.5); }
+.brillo-arriba { background: radial-gradient(closest-side, rgba(56, 170, 190, 0.28), rgba(56, 170, 190, 0.08) 60%, transparent 100%); }
+html[data-tema='claro'] .boton-arriba { box-shadow: 0 0 30px -2px rgba(29, 155, 200, 0.55), 0 8px 20px -10px rgba(15, 27, 43, 0.35); }
+html[data-tema='claro'] .brillo-arriba { background: radial-gradient(closest-side, rgba(29, 155, 200, 0.4), rgba(29, 155, 200, 0.14) 60%, transparent 100%); }
+
+/* Buscador: el texto de ayuda del campo en gris oscuro (el panel siempre es claro) */
+.buscador-input::placeholder { color: #6b7280; }
+
+/* Resultados del buscador sin barra de desplazamiento (se sigue pudiendo bajar) */
+.sin-barra { scrollbar-width: none; }
+.sin-barra::-webkit-scrollbar { display: none; }
